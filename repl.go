@@ -8,6 +8,32 @@ import (
 
 func startRepl() {
 	reader := bufio.NewScanner(os.Stdin)
+	commandRegistry := map[string]cliCommand{
+		"map": {
+			name:        "map",
+			description: "Displays next 20 locations.",
+			callback:    commandMapForward,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays previous 20 locations.",
+			callback:    commandMapBackward,
+		},
+		"help": {
+			name:        "help",
+			description: "Prints the list of available commands.",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exits the Pokedex.",
+			callback:    commandExit,
+		},
+	}
+	cfg := config{
+		next:     "https://pokeapi.co/api/v2/location-area/",
+		previous: "",
+	}
 
 	fmt.Println("Welcome to the Pokedex!")
 	for {
@@ -19,11 +45,16 @@ func startRepl() {
 			continue
 		}
 
-		cmd, ok := commandRegistry[words[0]]
-		if !ok {
+		cmd, exists := commandRegistry[words[0]]
+		if !exists {
 			fmt.Printf("Command '%s' not found!\n", words[0])
 			continue
 		}
-		cmd.callback()
+
+		err := cmd.callback(&cfg, commandRegistry)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 	}
 }
