@@ -4,10 +4,18 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
+
+	"github.com/UnLuckyNikolay/pokedex/pokeapi"
 )
 
 func startRepl() {
 	reader := bufio.NewScanner(os.Stdin)
+	cfg := config{
+		httpClient: pokeapi.NewClient(5 * time.Second),
+		nextLocURL: "https://pokeapi.co/api/v2/location-area/",
+		prevLocURL: "",
+	}
 	commandRegistry := map[string]cliCommand{
 		"map": {
 			name:        "map",
@@ -30,12 +38,9 @@ func startRepl() {
 			callback:    commandExit,
 		},
 	}
-	cfg := config{
-		nextLocURL: "https://pokeapi.co/api/v2/location-area/",
-		prevLocURL: "",
-	}
 
 	fmt.Println("Welcome to the Pokedex!")
+	fmt.Println("Write 'help' to see available commands.")
 	for {
 		fmt.Print("Pokedex > ")
 		reader.Scan()

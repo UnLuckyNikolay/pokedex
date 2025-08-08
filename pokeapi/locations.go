@@ -2,14 +2,18 @@ package pokeapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
-func GetLocations(url string) (Locations, error) {
-	res, err := http.Get(url)
+func (c *Client) GetLocations(url string) (Locations, error) {
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return Locations{}, fmt.Errorf("Failure making a GET request: %v", err)
+		return Locations{}, err
+	}
+
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		return Locations{}, err
 	}
 	defer res.Body.Close()
 
@@ -17,7 +21,7 @@ func GetLocations(url string) (Locations, error) {
 	decoder := json.NewDecoder(res.Body)
 	err = decoder.Decode(&data)
 	if err != nil {
-		return Locations{}, fmt.Errorf("Failure decoding JSON: %v", err)
+		return Locations{}, err
 	}
 
 	return data, nil

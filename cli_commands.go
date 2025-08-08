@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/UnLuckyNikolay/pokedex/pokeapi"
 )
 
 type cliCommand struct {
@@ -32,7 +30,7 @@ func commandMapForward(cfgPtr *config, commandRegistry map[string]cliCommand) er
 		return fmt.Errorf("At the end of the list, use 'mapb' to go backward.")
 	}
 
-	data, err := pokeapi.GetLocations(cfgPtr.nextLocURL)
+	data, err := cfgPtr.httpClient.GetLocations(cfgPtr.nextLocURL)
 	if err != nil {
 		return err
 	}
@@ -40,7 +38,7 @@ func commandMapForward(cfgPtr *config, commandRegistry map[string]cliCommand) er
 	cfgPtr.nextLocURL = data.Next
 	cfgPtr.prevLocURL = data.Previous
 	for _, loc := range data.Results {
-		fmt.Println(loc.Name)
+		fmt.Println(" > " + loc.Name)
 	}
 
 	return nil
@@ -52,7 +50,7 @@ func commandMapBackward(cfgPtr *config, commandRegistry map[string]cliCommand) e
 		return fmt.Errorf("At the start of the list, use 'map' to go forward.")
 	}
 
-	data, err := pokeapi.GetLocations(cfgPtr.prevLocURL)
+	data, err := cfgPtr.httpClient.GetLocations(cfgPtr.prevLocURL)
 	if err != nil {
 		return err
 	}
@@ -60,7 +58,7 @@ func commandMapBackward(cfgPtr *config, commandRegistry map[string]cliCommand) e
 	cfgPtr.nextLocURL = data.Next
 	cfgPtr.prevLocURL = data.Previous
 	for _, loc := range data.Results {
-		fmt.Println(loc.Name)
+		fmt.Println("  " + loc.Name)
 	}
 
 	return nil
