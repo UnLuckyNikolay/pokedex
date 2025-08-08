@@ -9,6 +9,7 @@ import (
 func startRepl() {
 	reader := bufio.NewScanner(os.Stdin)
 
+	fmt.Println("Welcome to the Pokedex!")
 	for {
 		fmt.Print("Pokedex > ")
 		reader.Scan()
@@ -18,6 +19,11 @@ func startRepl() {
 			continue
 		}
 
-		fmt.Printf("Your command was: %s\n", words[0])
+		cmd, ok := commandRegistry[words[0]]
+		if !ok {
+			fmt.Printf("Command '%s' not found!\n", words[0])
+			continue
+		}
+		cmd.callback()
 	}
 }
