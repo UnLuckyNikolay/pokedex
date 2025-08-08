@@ -6,14 +6,16 @@ import (
 	"os"
 	"time"
 
-	"github.com/UnLuckyNikolay/pokedex/pokeapi"
+	"github.com/UnLuckyNikolay/pokedex/internal/pokeapi"
+	"github.com/UnLuckyNikolay/pokedex/internal/pokecache"
 )
 
 func startRepl() {
 	reader := bufio.NewScanner(os.Stdin)
 	cfg := config{
 		httpClient: pokeapi.NewClient(5 * time.Second),
-		nextLocURL: "https://pokeapi.co/api/v2/location-area/",
+		cache:      pokecache.NewCache(1 * time.Hour),
+		nextLocURL: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
 		prevLocURL: "",
 	}
 	commandRegistry := map[string]cliCommand{
