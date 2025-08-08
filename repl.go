@@ -31,8 +31,8 @@ func startRepl() {
 		},
 	}
 	cfg := config{
-		next:     "https://pokeapi.co/api/v2/location-area/",
-		previous: "",
+		nextLocURL: "https://pokeapi.co/api/v2/location-area/",
+		prevLocURL: "",
 	}
 
 	fmt.Println("Welcome to the Pokedex!")
