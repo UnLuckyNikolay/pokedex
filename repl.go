@@ -17,8 +17,8 @@ func startRepl() {
 		cache:      pokecache.NewCache(1 * time.Hour),
 		baseURL:    "https://pokeapi.co/api/v2/",
 
-		locOffset: 0,
-		locMax:    0,
+		locPage: 0,
+		locMax:  0,
 	}
 	commandRegistry := map[string]cliCommand{
 		"map": {

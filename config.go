@@ -10,7 +10,7 @@ type config struct {
 	cache      *pokecache.Cache
 	baseURL    string
 
-	locOffset  int
+	locPage    int
 	locMax     int
 	locCurrent *pokeapi.LocationArea
 }
