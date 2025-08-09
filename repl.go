@@ -51,13 +51,13 @@ func startRepl() {
 			callback:    commandExplore,
 		},
 		"catch": {
-			name:        "catch <name>",
+			name:        "catch <pokemon>",
 			description: "Tries to catch the specified pokemon. You need to be in the same location as them.",
 			callback:    commandCatch,
 		},
 		"inspect": {
-			name:        "inspect <name>",
-			description: "Inspect the caught pokemon.",
+			name:        "inspect <pokemon>",
+			description: "Inspect the pokemon that was previously caught.",
 			callback:    commandInspect,
 		},
 		"pokedex": {
@@ -98,5 +98,7 @@ func startRepl() {
 			fmt.Println(err)
 			continue
 		}
+
+		fmt.Println()
 	}
 }
