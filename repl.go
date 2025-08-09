@@ -41,11 +41,11 @@ func startRepl() {
 			description: "Exits the Pokedex.",
 			callback:    commandExit,
 		},
-		/*"explore": {
-			name:        "explore <location>",
+		"explore": {
+			name:        "explore <id/location>",
 			description: "Moves you into the specified location.",
-			callback:    _,
-		},*/
+			callback:    commandExplore,
+		},
 	}
 
 	fmt.Println("Welcome to the Pokedex!")

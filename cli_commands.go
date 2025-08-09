@@ -35,7 +35,7 @@ func commandMapForward(cfg *config, commandRegistry map[string]cliCommand, args 
 	url := fmt.Sprintf("%slocation-area/?limit=20&offset=%d", cfg.baseURL, cfg.locOffset)
 
 	//Getting data
-	data, err := cfg.httpClient.GetLocations(url, cfg.cache)
+	data, err := cfg.httpClient.GetLocationAreaList(url, cfg.cache)
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func commandMapBackward(cfg *config, commandRegistry map[string]cliCommand, args
 	url := fmt.Sprintf("%slocation-area/?limit=%d&offset=%d", cfg.baseURL, limit, offset)
 
 	//Getting data
-	data, err := cfg.httpClient.GetLocations(url, cfg.cache)
+	data, err := cfg.httpClient.GetLocationAreaList(url, cfg.cache)
 	if err != nil {
 		return err
 	}
@@ -101,6 +101,25 @@ func commandMapBackward(cfg *config, commandRegistry map[string]cliCommand, args
 	//Updating config
 	cfg.locMax = data.Count
 	cfg.locOffset -= limit
+
+	return nil
+}
+
+func commandExplore(cfg *config, commandRegistry map[string]cliCommand, args []string) error {
+	url := fmt.Sprintf("%slocation-area/%s", cfg.baseURL, args[0])
+
+	//Getting data
+	data, err := cfg.httpClient.GetLocationArea(url, cfg.cache)
+	if err != nil {
+		return err
+	}
+
+	//Printing the list of pokemons
+	fmt.Printf("Exploring the %s...\n", data.Name)
+	fmt.Printf("Encountered pokemon:\n")
+	for _, pokemon := range data.PokemonEncounters {
+		fmt.Printf(" > %s\n", pokemon.Pokemon.Name)
+	}
 
 	return nil
 }
