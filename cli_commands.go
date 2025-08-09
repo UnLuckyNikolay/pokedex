@@ -115,7 +115,7 @@ func commandExplore(cfg *config, commandRegistry map[string]cliCommand, args []s
 		var err error
 		data, err = cfg.httpClient.GetLocationArea(url, cfg.cache)
 		if err != nil {
-			return err
+			return fmt.Errorf("%v: %v", args[0], err)
 		}
 	}
 

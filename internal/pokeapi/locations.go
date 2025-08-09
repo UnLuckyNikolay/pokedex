@@ -2,6 +2,7 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -54,6 +55,9 @@ func (c *Client) GetLocationArea(url string, cache *pokecache.Cache) (LocationAr
 		res, err := c.httpClient.Do(req)
 		if err != nil {
 			return LocationArea{}, err
+		}
+		if res.StatusCode == 404 {
+			return LocationArea{}, fmt.Errorf("Invalid location name or id")
 		}
 		defer res.Body.Close()
 
