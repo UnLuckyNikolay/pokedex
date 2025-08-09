@@ -19,6 +19,8 @@ func startRepl() {
 
 		locPage: 0,
 		locMax:  0,
+
+		pokedex: map[string]pokeapi.Pokemon{},
 	}
 	commandRegistry := map[string]cliCommand{
 		"map": {
@@ -45,6 +47,11 @@ func startRepl() {
 			name:        "explore <id/location>",
 			description: "Moves you into the specified location. Leave empty to reexplore current location.",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch <name>",
+			description: "Tries to catch the specified pokemon. You need to be in the same location as them.",
+			callback:    commandCatch,
 		},
 	}
 

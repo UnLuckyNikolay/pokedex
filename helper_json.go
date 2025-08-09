@@ -11,3 +11,13 @@ func getLocationName(loc pokeapi.LocationArea) string {
 
 	return loc.Name
 }
+
+func checkIfPokemonIsPresent(locCurrent pokeapi.LocationArea, pokemonName string) bool {
+	for _, pok := range locCurrent.PokemonEncounters {
+		if pok.Pokemon.Name == pokemonName {
+			return true
+		}
+	}
+
+	return false
+}

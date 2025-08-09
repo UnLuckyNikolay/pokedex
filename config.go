@@ -13,4 +13,7 @@ type config struct {
 	locPage    int
 	locMax     int
 	locCurrent *pokeapi.LocationArea
+
+	pokedex      map[string]pokeapi.Pokemon
+	lastWildPoke *pokeapi.Pokemon
 }

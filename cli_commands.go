@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"strings"
 
 	"github.com/UnLuckyNikolay/pokedex/internal/pokeapi"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type cliCommand struct {
@@ -128,6 +131,53 @@ func commandExplore(cfg *config, commandRegistry map[string]cliCommand, args []s
 
 	//Updating config
 	cfg.locCurrent = &data
+
+	return nil
+}
+
+func commandCatch(cfg *config, commandRegistry map[string]cliCommand, args []string) error {
+	caser := cases.Title(language.English)
+	nameTitle := caser.String(args[0])
+	var pokemon pokeapi.Pokemon
+
+	//Error checks
+	_, caught := cfg.pokedex[args[0]]
+	if caught {
+		return fmt.Errorf("%s: pokemon already caught!", nameTitle)
+	} else if cfg.locCurrent == nil {
+		return fmt.Errorf("You are not currently in a location. Use command 'explore <id/location>' or 'map'.")
+	} else if !checkIfPokemonIsPresent(*cfg.locCurrent, args[0]) {
+		return fmt.Errorf("%s: pokemon not found in the current location!", nameTitle)
+		//Getting data
+	} else if cfg.lastWildPoke != nil && cfg.lastWildPoke.Name == args[0] {
+		pokemon = *cfg.lastWildPoke
+	} else {
+		//Building url
+		url := fmt.Sprintf("%spokemon/%s", cfg.baseURL, args[0])
+
+		var err error
+		pokemon, err = cfg.httpClient.GetPokemon(url, cfg.cache)
+		if err != nil {
+			return err
+		}
+	}
+
+	//Rolling for catch
+	fmt.Printf("Throwing a Pokeball at %s...\n", nameTitle)
+	roll := rand.IntN(10)
+	roll = roll * roll * roll //Base experience range - 36 (Sunkern) to 635 (Blissey)
+
+	//Updating config
+	if roll >= pokemon.BaseExperience {
+		fmt.Printf("Successfully caught %s!\n", nameTitle)
+
+		cfg.pokedex[args[0]] = pokemon
+		cfg.lastWildPoke = nil
+	} else {
+		fmt.Printf("%s escaped!\n", nameTitle)
+
+		cfg.lastWildPoke = &pokemon //Saved for recatching
+	}
 
 	return nil
 }
