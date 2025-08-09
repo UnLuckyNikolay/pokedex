@@ -60,6 +60,11 @@ func startRepl() {
 			description: "Inspect the caught pokemon.",
 			callback:    commandInspect,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Shows the list of the caught pokemon.",
+			callback:    commandPokedex,
+		},
 	}
 
 	fmt.Println("Welcome to the Pokedex!")

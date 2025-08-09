@@ -192,7 +192,7 @@ func commandInspect(cfg *config, commandRegistry map[string]cliCommand, args []s
 
 	fmt.Printf("Name: %s\n", nameTitle)
 	fmt.Printf("Height: %d\n", pokemon.Height)
-	fmt.Printf("Name: %d\n", pokemon.Weight)
+	fmt.Printf("Weight: %d\n", pokemon.Weight)
 
 	fmt.Printf("Stats:\n")
 	for _, stat := range pokemon.Stats {
@@ -219,6 +219,26 @@ func commandInspect(cfg *config, commandRegistry map[string]cliCommand, args []s
 		name = strings.Join(nameSplit, " ")
 		name = caser.String(name)
 		fmt.Printf(" - Slot %d: %s\n", abi.Slot, name)
+	}
+
+	return nil
+}
+
+func commandPokedex(cfg *config, commandRegistry map[string]cliCommand, args []string) error {
+	caser := cases.Title(language.English)
+	if len(cfg.pokedex) == 0 {
+		return fmt.Errorf("Your Pokedex is currently empty.")
+	}
+
+	type sortSt struct {
+		id   int
+		name string
+	}
+
+	fmt.Printf("Pokedex:\n")
+	for _, pokemon := range cfg.pokedex {
+		nameTitle := caser.String(pokemon.Name)
+		fmt.Printf(" - %s\n", nameTitle)
 	}
 
 	return nil
