@@ -2,7 +2,6 @@ package pokeapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -31,8 +30,6 @@ func (c *Client) GetLocations(url string, cache *pokecache.Cache) (Locations, er
 		}
 
 		cache.Add(url, data)
-	} else { // TEST
-		fmt.Println(" >>> Fetched from cache!")
 	}
 
 	locs := Locations{}

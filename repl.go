@@ -15,18 +15,20 @@ func startRepl() {
 	cfg := config{
 		httpClient: pokeapi.NewClient(5 * time.Second),
 		cache:      pokecache.NewCache(1 * time.Hour),
-		nextLocURL: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
-		prevLocURL: "",
+		baseURL:    "https://pokeapi.co/api/v2/",
+
+		locOffset: 0,
+		locMax:    0,
 	}
 	commandRegistry := map[string]cliCommand{
 		"map": {
 			name:        "map",
-			description: "Displays next 20 locations.",
+			description: "Displays 20 next locations.",
 			callback:    commandMapForward,
 		},
 		"mapb": {
 			name:        "mapb",
-			description: "Displays previous 20 locations.",
+			description: "Displays 20 previous locations.",
 			callback:    commandMapBackward,
 		},
 		"help": {
@@ -39,6 +41,11 @@ func startRepl() {
 			description: "Exits the Pokedex.",
 			callback:    commandExit,
 		},
+		/*"explore": {
+			name:        "explore <location>",
+			description: "Moves you into the specified location.",
+			callback:    _,
+		},*/
 	}
 
 	fmt.Println("Welcome to the Pokedex!")
@@ -58,7 +65,12 @@ func startRepl() {
 			continue
 		}
 
-		err := cmd.callback(&cfg, commandRegistry)
+		var err error
+		if len(words) >= 1 {
+			err = cmd.callback(&cfg, commandRegistry, words[1:])
+		} else {
+			err = cmd.callback(&cfg, commandRegistry, []string{})
+		}
 		if err != nil {
 			fmt.Println(err)
 			continue

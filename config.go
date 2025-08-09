@@ -8,6 +8,8 @@ import (
 type config struct {
 	httpClient pokeapi.Client
 	cache      *pokecache.Cache
-	nextLocURL string
-	prevLocURL string
+	baseURL    string
+
+	locOffset int
+	locMax    int
 }
