@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/fatih/color"
+
 	"github.com/UnLuckyNikolay/pokedex/internal/pokeapi"
 	"github.com/UnLuckyNikolay/pokedex/internal/pokecache"
 )
@@ -53,12 +55,18 @@ func startRepl() {
 			description: "Tries to catch the specified pokemon. You need to be in the same location as them.",
 			callback:    commandCatch,
 		},
+		"inspect": {
+			name:        "inspect <name>",
+			description: "Inspect the caught pokemon.",
+			callback:    commandInspect,
+		},
 	}
 
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Write 'help' to see available commands.")
 	for {
-		fmt.Print("Pokedex > ")
+		red := color.New(color.FgRed).PrintFunc()
+		red("Pokedex > ")
 		if cfg.locCurrent != nil {
 			fmt.Print(getLocationName(*cfg.locCurrent) + " > ")
 		}

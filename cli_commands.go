@@ -181,3 +181,45 @@ func commandCatch(cfg *config, commandRegistry map[string]cliCommand, args []str
 
 	return nil
 }
+
+func commandInspect(cfg *config, commandRegistry map[string]cliCommand, args []string) error {
+	caser := cases.Title(language.English)
+	nameTitle := caser.String(args[0])
+	pokemon, caught := cfg.pokedex[args[0]]
+	if !caught {
+		return fmt.Errorf("%s: pokemon has not been caught yet!", nameTitle)
+	}
+
+	fmt.Printf("Name: %s\n", nameTitle)
+	fmt.Printf("Height: %d\n", pokemon.Height)
+	fmt.Printf("Name: %d\n", pokemon.Weight)
+
+	fmt.Printf("Stats:\n")
+	for _, stat := range pokemon.Stats {
+		name := stat.Stat.Name
+		nameSplit := strings.Split(name, "-")
+		name = strings.Join(nameSplit, " ")
+		name = caser.String(name)
+		fmt.Printf(" - %s: %d\n", name, stat.BaseStat)
+	}
+
+	fmt.Printf("Types:\n")
+	for _, typeP := range pokemon.Types {
+		name := typeP.Type.Name
+		nameSplit := strings.Split(name, "-")
+		name = strings.Join(nameSplit, " ")
+		name = caser.String(name)
+		fmt.Printf(" - %s\n", name)
+	}
+
+	fmt.Printf("Abilities:\n")
+	for _, abi := range pokemon.Abilities {
+		name := abi.Ability.Name
+		nameSplit := strings.Split(name, "-")
+		name = strings.Join(nameSplit, " ")
+		name = caser.String(name)
+		fmt.Printf(" - Slot %d: %s\n", abi.Slot, name)
+	}
+
+	return nil
+}
