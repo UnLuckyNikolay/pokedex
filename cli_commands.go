@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/UnLuckyNikolay/pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -106,20 +108,31 @@ func commandMapBackward(cfg *config, commandRegistry map[string]cliCommand, args
 }
 
 func commandExplore(cfg *config, commandRegistry map[string]cliCommand, args []string) error {
-	url := fmt.Sprintf("%slocation-area/%s", cfg.baseURL, args[0])
-
 	//Getting data
-	data, err := cfg.httpClient.GetLocationArea(url, cfg.cache)
-	if err != nil {
-		return err
+	var data pokeapi.LocationArea
+	if len(args) == 0 && cfg.locCurrent != nil {
+		data = *cfg.locCurrent
+	} else if len(args) == 0 {
+		return fmt.Errorf("You are not currently in a location. Write the name or the id of the destination.")
+	} else {
+		url := fmt.Sprintf("%slocation-area/%s", cfg.baseURL, args[0])
+
+		var err error
+		data, err = cfg.httpClient.GetLocationArea(url, cfg.cache)
+		if err != nil {
+			return err
+		}
 	}
 
 	//Printing the list of pokemons
-	fmt.Printf("Exploring the %s...\n", data.Name)
+	fmt.Printf("Exploring the %s...\n", getLocationName(data))
 	fmt.Printf("Encountered pokemon:\n")
 	for _, pokemon := range data.PokemonEncounters {
 		fmt.Printf(" > %s\n", pokemon.Pokemon.Name)
 	}
+
+	//Updating config
+	cfg.locCurrent = &data
 
 	return nil
 }

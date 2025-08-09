@@ -43,7 +43,7 @@ func startRepl() {
 		},
 		"explore": {
 			name:        "explore <id/location>",
-			description: "Moves you into the specified location.",
+			description: "Moves you into the specified location. Leave empty to reexplore current location.",
 			callback:    commandExplore,
 		},
 	}
@@ -52,6 +52,9 @@ func startRepl() {
 	fmt.Println("Write 'help' to see available commands.")
 	for {
 		fmt.Print("Pokedex > ")
+		if cfg.locCurrent != nil {
+			fmt.Print(getLocationName(*cfg.locCurrent) + " > ")
+		}
 		reader.Scan()
 		command := reader.Text()
 		words := cleanInput(command)
