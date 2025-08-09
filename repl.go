@@ -1,29 +1,36 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+	"log"
 	"time"
 
-	"github.com/fatih/color"
+	"github.com/chzyer/readline"
 
 	"github.com/UnLuckyNikolay/pokedex/internal/pokeapi"
 	"github.com/UnLuckyNikolay/pokedex/internal/pokecache"
 )
 
 func startRepl() {
-	reader := bufio.NewScanner(os.Stdin)
+	readerTemp, err := readline.New("\033[31mPokedex > \033[0m")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var command string
+
 	cfg := config{
 		httpClient: pokeapi.NewClient(5 * time.Second),
 		cache:      pokecache.NewCache(1 * time.Hour),
 		baseURL:    "https://pokeapi.co/api/v2/",
+		reader:     readerTemp,
 
 		locPage: 0,
 		locMax:  0,
 
 		pokedex: map[string]pokeapi.Pokemon{},
 	}
+
 	commandRegistry := map[string]cliCommand{
 		"map": {
 			name:        "map",
@@ -69,14 +76,16 @@ func startRepl() {
 
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Write 'help' to see available commands.")
+	fmt.Println()
+
+	//Main loop
 	for {
-		red := color.New(color.FgRed).PrintFunc()
-		red("Pokedex > ")
-		if cfg.locCurrent != nil {
+		/*if cfg.locCurrent != nil {
 			fmt.Print(getLocationName(*cfg.locCurrent) + " > ")
-		}
-		reader.Scan()
-		command := reader.Text()
+		}*/
+
+		//Command input
+		command, err = cfg.reader.Readline()
 		words := cleanInput(command)
 		if len(words) == 0 {
 			continue
@@ -85,9 +94,11 @@ func startRepl() {
 		cmd, exists := commandRegistry[words[0]]
 		if !exists {
 			fmt.Printf("Command '%s' not found!\n", words[0])
+			fmt.Println()
 			continue
 		}
 
+		//Callback
 		var err error
 		if len(words) >= 1 {
 			err = cmd.callback(&cfg, commandRegistry, words[1:])

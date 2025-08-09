@@ -131,6 +131,7 @@ func commandExplore(cfg *config, commandRegistry map[string]cliCommand, args []s
 
 	//Updating config
 	cfg.locCurrent = &data
+	cfg.reader.SetPrompt(fmt.Sprintf("\033[31mPokedex > \033[0m%s > ", getLocationName(*cfg.locCurrent)))
 
 	return nil
 }
